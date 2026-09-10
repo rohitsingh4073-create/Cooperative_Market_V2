@@ -170,8 +170,8 @@ class Advertisement:
 # APP SETUP
 # ============================================================
 
-app = Flask(__name__)
-CORS(app, origins=["http://127.0.0.1:8000"])
+app = Flask(__name__, static_folder='.', static_url_path='')
+CORS(app)
 
 # ============================================================
 # FILE UPLOAD CONFIGURATION
@@ -217,11 +217,11 @@ ad_counter = [1]
 
 @app.route("/")
 def serve_website():
-    return send_from_directory(".", "index.html")
+    return send_from_directory('.', "index.html")
 
 @app.route("/script.js")
 def serve_javascript():
-    return send_from_directory(".", "script.js")
+    return send_from_directory('.', "script.js")
 
 @app.route("/uploads/<filename>")
 def serve_upload(filename):
@@ -767,7 +767,6 @@ def add_product():
 
     worker.products_services.append(product)
 
-    # Create advertisement
     ad_id = f"AD{ad_counter[0]:03d}"
     ad_counter[0] += 1
 
@@ -992,19 +991,5 @@ def get_subscription_plans(worker_id):
 # ============================================================
 
 if __name__ == "__main__":
-    print()
-    print("========================================")
-    print("   COOPERATIVE SERVICES BACKEND")
-    print("========================================")
-    print()
-    print("Server running at:")
-    print("http://127.0.0.1:8000")
-    print()
-    print("Data is stored temporarily in memory.")
-    print("Stopping this program will erase all data.")
-    print()
-    print("Uploads folder: uploads/")
-    print()
-
     port = int(os.environ.get('PORT', 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
