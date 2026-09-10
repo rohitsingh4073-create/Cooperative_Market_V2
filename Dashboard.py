@@ -992,18 +992,8 @@ def get_subscription_plans(worker_id):
 # ============================================================
 
 if __name__ == "__main__":
-    print()
-    print("========================================")
-    print("   COOPERATIVE SERVICES BACKEND")
-    print("========================================")
-    print()
-    print("Server running at:")
-    print("http://127.0.0.1:8000")
-    print()
-    print("Data is stored temporarily in memory.")
-    print("Stopping this program will erase all data.")
-    print()
-    print("Uploads folder: uploads/")
-    print()
-
-    app.run(host="127.0.0.1", port=8000, debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 8000)),
+        debug=True
+    )
