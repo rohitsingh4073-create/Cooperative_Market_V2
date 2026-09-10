@@ -171,7 +171,7 @@ class Advertisement:
 # ============================================================
 
 app = Flask(__name__)
-CORS(app, origins=["http://127.0.0.1:8000"])
+CORS(app)
 
 # ============================================================
 # FILE UPLOAD CONFIGURATION
