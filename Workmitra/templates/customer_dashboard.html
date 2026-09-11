@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Dashboard - Workmitra{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-sidebar">
+        <h2>Dashboard Menu</h2>
+        <ul class="dashboard-menu">
+            <li><a href="#" onclick="showSection('find-worker')" class="menu-link active">🔍 Find Worker</a></li>
+            <li><a href="#" onclick="showSection('my-bookings')" class="menu-link">📅 My Bookings</a></li>
+            <li><a href="#" onclick="showSection('subscriptions')" class="menu-link">🎯 My Subscriptions</a></li>
+            <li><a href="#" onclick="showSection('profile')" class="menu-link">👤 My Profile</a></li>
+        </ul>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            <h1>Customer Dashboard</h1>
+            <p>Welcome, {{ user.full_name }}! 👋</p>
+        </div>
+
+        <!-- FEATURED ADS SECTION -->
+        <section class="dashboard-section">
+            <h2>💡 Featured Services</h2>
+            <div class="ads-grid" id="dashboardAds">
+                <p>Loading services...</p>
+            </div>
+        </section>
+
+        <!-- FIND WORKER SECTION -->
+        <section id="find-worker" class="dashboard-section active">
+            <h2>🔍 Find a Worker</h2>
+            <div class="find-worker-box">
+                <div class="form-group">
+                    <label for="service">Select Service</label>
+                    <select id="service">
+                        <option value="">Choose a service</option>
+                        <option value="Electrician">Electrician</option>
+                        <option value="Plumber">Plumber</option>
+                        <option value="Carpenter">Carpenter</option>
+                        <option value="Painter">Painter</option>
+                        <option value="Cleaner">Cleaner</option>
+                        <option value="Driver">Driver</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="searchWorkers()">Search Workers</button>
+            </div>
+            <div id="workerResults" style="margin-top: 20px;"></div>
+        </section>
+
+        <!-- MY BOOKINGS SECTION -->
+        <section id="my-bookings" class="dashboard-section">
+            <h2>📅 My Bookings</h2>
+            <div id="bookingsList"></div>
+        </section>
+
+        <!-- SUBSCRIPTIONS SECTION -->
+        <section id="subscriptions" class="dashboard-section">
+            <h2>🎯 My Subscriptions</h2>
+            <div id="subscriptionsList"></div>
+        </section>
+
+        <!-- PROFILE SECTION -->
+        <section id="profile" class="dashboard-section">
+            <h2>👤 My Profile</h2>
+            <div class="profile-card">
+                <p><strong>Name:</strong> {{ user.full_name }}</p>
+                <p><strong>Mobile:</strong> {{ user.mobile_number }}</p>
+                <p><strong>Email:</strong> {{ user.email or 'Not provided' }}</p>
+                <p><strong>Address:</strong> {{ user.address }}</p>
+                <p><strong>Pincode:</strong> {{ user.pincode }}</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    const API_URL = window.location.origin;
+    const customerId = "{{ user.customer_id }}";
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        
+        document.querySelectorAll('.menu-link').forEach(m => m.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        if (sectionId === 'my-bookings') loadBookings();
+        if (sectionId === 'subscriptions') loadSubscriptions();
+    }
+
+    async function loadDashboardAds() {
+        try {
+            const response = await fetch(API_URL + '/api/ads/homepage');
+            const data = await response.json();
+            
+            const container = document.getElementById('dashboardAds');
+            container.innerHTML = '';
+            
+            if (!data.success || data.ads.length === 0) {
+                container.innerHTML = '<p>No services available yet.</p>';
+                return;
+            }
+            
+            data.ads.slice(0, 6).forEach(ad => {
+                const adCard = document.createElement('div');
+                adCard.className = 'ad-card';
+                
+                let imageHtml = '';
+                if (ad.ad_photo) {
+                    imageHtml = `<div class="ad-image"><img src="${API_URL}/uploads/${ad.ad_photo}" alt="${ad.product_name}"></div>`;
+                } else {
+                    imageHtml = `<div class="ad-image">📷</div>`;
+                }
+                
+                adCard.innerHTML = `
+                    ${imageHtml}
+                    <div class="ad-content">
+                        <h4>${ad.product_name}</h4>
+                        <p>${ad.description}</p>
+                        <div class="ad-price">${ad.product_price || 'Contact for price'}</div>
+                        <span class="ad-skill">${ad.primary_skill}</span>
+                        <p class="ad-shop">By: ${ad.shop_name}</p>
+                    </div>
+                `;
+                
+                container.appendChild(adCard);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function searchWorkers() {
+        const service = document.getElementById('service').value;
+        
+        if (!service) {
+            alert('Please select a service');
+            return;
+        }
+        
+        const results = document.getElementById('workerResults');
+        results.innerHTML = '<p>Searching...</p>';
+        
+        try {
+            const response = await fetch(API_URL + '/api/workers?service=' + encodeURIComponent(service));
+            const data = await response.json();
+            
+            if (!data.success || data.workers.length === 0) {
+                results.innerHTML = '<p>No available workers found.</p>';
+                return;
+            }
+            
+            results.innerHTML = '<h3>Available Workers</h3>';
+            
+            data.workers.forEach(worker => {
+                let ratingText = 'No ratings yet';
+                if (worker.average_rating !== null) {
+                    ratingText = worker.average_rating + ' / 5 (' + worker.number_of_ratings + ' ratings)';
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'worker-card';
+                card.innerHTML = `
+                    <h3>${worker.full_name}</h3>
+                    <p><strong>Skill:</strong> ${worker.primary_skill}</p>
+                    <p><strong>Experience:</strong> ${worker.years_of_experience} years</p>
+                    <p><strong>About:</strong> ${worker.description}</p>
+                    <p><strong>Working hours:</strong> ${worker.preferred_working_hours}</p>
+                    <p><strong>Rating:</strong> ${ratingText}</p>
+                    <button class="btn btn-primary btn-sm" onclick="showBookingForm('${worker.worker_id}', '${worker.full_name}')">Book Worker</button>
+                    <button class="btn btn-secondary btn-sm" onclick="showSubscriptionPlans('${worker.worker_id}', '${worker.full_name}')">Subscribe to Plan</button>
+                `;
+                results.appendChild(card);
+            });
+        } catch (error) {
+            results.innerHTML = '<p>Error connecting to server</p>';
+        }
+    }
+
+    function showBookingForm(workerId, workerName) {
+        const html = `
+            <div class="booking-form">
+                <h3>📅 Book ${workerName}</h3>
+                <div class="form-group">
+                    <label for="bookingDate">Select Date</label>
+                    <input type="date" id="bookingDate">
+                </div>
+                <div class="form-group">
+                    <label for="problemPhoto">Upload Problem Photo (Optional)</label>
+                    <input type="file" id="problemPhoto" accept="image/*">
+                </div>
+                <button class="btn btn-primary" onclick="confirmBooking('${workerId}')">Confirm Booking</button>
+                <div id="bookingMessage"></div>
+            </div>
+        `;
+        document.getElementById('workerResults').innerHTML = html;
+    }
+
+    async function confirmBooking(workerId) {
+        const date = document.getElementById('bookingDate').value;
+        
+        if (!date) {
+            alert('Please select a date');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('customer_id', customerId);
+        formData.append('worker_id', workerId);
+        formData.append('date', date);
+        
+        const fileInput = document.getElementById('problemPhoto');
+        if (fileInput.files.length > 0) {
+            formData.append('problem_photo', fileInput.files[0]);
+        }
+        
+        try {
+            const response = await fetch(API_URL + '/api/book', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            const messageEl = document.getElementById('bookingMessage');
+            
+            if (data.success) {
+                messageEl.className = 'message success-message';
+                messageEl.textContent = 'Booking created successfully!';
+                setTimeout(() => {
+                    showSection('my-bookings');
+                }, 1500);
+            } else {
+                messageEl.className = 'message error-message';
+                messageEl.textContent = data.message;
+            }
+        } catch (error) {
+            document.getElementById('bookingMessage').className = 'message error-message';
+            document.getElementById('bookingMessage').textContent = 'Error creating booking';
+        }
+    }
+
+    async function loadBookings() {
+        const container = document.getElementById('bookingsList');
+        container.innerHTML = '<p>Loading...</p>';
+        
+        try {
+            const response = await fetch(API_URL + '/api/bookings/customer/' + customerId);
+            const data = await response.json();
+            
+            if (data.bookings.length === 0) {
+                container.innerHTML = '<p>You have no bookings yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            data.bookings.forEach(booking => {
+                const card = document.createElement('div');
+                card.className = 'booking-card';
+                
+                let buttons = '';
+                if (booking.status === 'COMPLETED') {
+                    buttons = `<button class="btn btn-primary btn-sm" onclick="showRatingForm('${booking.booking_id}', '${booking.worker_name}')">⭐ Give Rating</button>`;
+                }
+                
+                let photoHtml = '';
+                if (booking.problem_photo) {
+                    photoHtml = `<p><img src="${API_URL}/uploads/${booking.problem_photo}" alt="Problem Photo" style="max-width: 150px; border-radius: 8px;"></p>`;
+                }
+                
+                card.innerHTML = `
+                    <h3>Booking ${booking.booking_id}</h3>
+                    <p><strong>Worker:</strong> ${booking.worker_name}</p>
+                    <p><strong>Service:</strong> ${booking.service}</p>
+                    <p><strong>Date:</strong> ${booking.date}</p>
+                    <p><strong>Status:</strong> <span class="badge">${booking.status}</span></p>
+                    ${photoHtml}
+                    ${buttons}
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            container.innerHTML = '<p>Error loading bookings</p>';
+        }
+    }
+
+    function showRatingForm(bookingId, workerName) {
+        const html = `
+            <div class="rating-form">
+                <h3>⭐ Rate ${workerName}</h3>
+                <div class="form-group">
+                    <label for="rating">Rating (1-5)</label>
+                    <select id="rating">
+                        <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ 4 - Good</option>
+                        <option value="3">⭐⭐⭐ 3 - Average</option>
+                        <option value="2">⭐⭐ 2 - Poor</option>
+                        <option value="1">⭐ 1 - Very Poor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="review">Review</label>
+                    <textarea id="review" rows="3" placeholder="Share your experience..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="submitRating('${bookingId}')">Submit Rating</button>
+                <div id="ratingMessage"></div>
+            </div>
+        `;
+        document.getElementById('bookingsList').innerHTML = html;
+    }
+
+    async function submitRating(bookingId) {
+        const rating = document.getElementById('rating').value;
+        const review = document.getElementById('review').value;
+        
+        try {
+            const response = await fetch(API_URL + '/api/rating', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    booking_id: bookingId,
+                    customer_id: customerId,
+                    rating: rating,
+                    review: review
+                })
+            });
+            
+            const data = await response.json();
+            const messageEl = document.getElementById('ratingMessage');
+            
+            if (data.success) {
+                messageEl.className = 'message success-message';
+                messageEl.textContent = 'Rating submitted successfully!';
+                setTimeout(() => loadBookings(), 1500);
+            } else {
+                messageEl.className = 'message error-message';
+                messageEl.textContent = data.message;
+            }
+        } catch (error) {
+            document.getElementById('ratingMessage').className = 'message error-message';
+            document.getElementById('ratingMessage').textContent = 'Error submitting rating';
+        }
+    }
+
+    async function showSubscriptionPlans(workerId, workerName) {
+        try {
+            const response = await fetch(API_URL + '/api/subscription-plans/' + workerId);
+            const data = await response.json();
+            
+            if (!data.success) {
+                alert('Error loading plans');
+                return;
+            }
+            
+            let html = `<div class="subscription-plans"><h3>🎯 Subscription Plans from ${workerName}</h3>`;
+            
+            data.plans.forEach(plan => {
+                html += `
+                    <div class="plan-card">
+                        <h4>${plan.plan_name}</h4>
+                        <p>${plan.plan_description}</p>
+                        <div class="plan-price">${plan.plan_price}</div>
+                        <p><strong>Duration:</strong> ${plan.plan_duration}</p>
+                        <button class="btn btn-primary btn-sm" onclick="subscribeToPlan('${workerId}', '${plan.plan_name}', '${plan.plan_description}', '${plan.plan_price}', '${plan.plan_duration}')">Subscribe Now</button>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            document.getElementById('workerResults').innerHTML = html;
+        } catch (error) {
+            alert('Error loading subscription plans');
+        }
+    }
+
+    async function subscribeToPlan(workerId, planName, planDescription, planPrice, planDuration) {
+        try {
+            const response = await fetch(API_URL + '/api/subscription/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_id: customerId,
+                    worker_id: workerId,
+                    plan_name: planName,
+                    plan_description: planDescription,
+                    plan_price: planPrice,
+                    plan_duration: planDuration
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('Subscription created successfully!');
+                showSection('subscriptions');
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            alert('Error creating subscription');
+        }
+    }
+
+    async function loadSubscriptions() {
+        const container = document.getElementById('subscriptionsList');
+        container.innerHTML = '<p>Loading...</p>';
+        
+        try {
+            const response = await fetch(API_URL + '/api/subscriptions/customer/' + customerId);
+            const data = await response.json();
+            
+            if (data.subscriptions.length === 0) {
+                container.innerHTML = '<p>You have no active subscriptions.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            data.subscriptions.forEach(sub => {
+                const card = document.createElement('div');
+                card.className = 'subscription-card';
+                
+                let cancelBtn = '';
+                if (sub.status === 'ACTIVE') {
+                    cancelBtn = `<button class="btn btn-danger btn-sm" onclick="cancelSubscription('${sub.subscription_id}')">Cancel</button>`;
+                }
+                
+                card.innerHTML = `
+                    <h3>${sub.plan_name}</h3>
+                    <p><strong>Provider:</strong> ${sub.worker_name}</p>
+                    <p><strong>Description:</strong> ${sub.plan_description}</p>
+                    <p><strong>Price:</strong> ${sub.plan_price}</p>
+                    <p><strong>Duration:</strong> ${sub.plan_duration}</p>
+                    <p><strong>Status:</strong> <span class="badge">${sub.status}</span></p>
+                    <p><strong>Valid Until:</strong> ${sub.end_date}</p>
+                    ${cancelBtn}
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            container.innerHTML = '<p>Error loading subscriptions</p>';
+        }
+    }
+
+    async function cancelSubscription(subscriptionId) {
+        if (!confirm('Are you sure you want to cancel this subscription?')) return;
+        
+        try {
+            const response = await fetch(API_URL + '/api/subscription/' + subscriptionId + '/cancel', {
+                method: 'POST'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('Subscription cancelled');
+                loadSubscriptions();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            alert('Error cancelling subscription');
+        }
+    }
+
+    // Load ads on page load
+    loadDashboardAds();
+</script>
+{% endblock %}

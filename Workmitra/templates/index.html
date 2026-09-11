@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Workmitra - Connect with Skilled Artisans{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Welcome to Workmitra</h1>
+            <p>Connect with skilled artisans - Plumbers, Electricians, Carpenters, Painters & More</p>
+            
+            {% if not session.get('user_id') %}
+                <div class="hero-buttons">
+                    <a href="{{ url_for('login_page') }}" class="btn btn-primary">Login</a>
+                    <a href="{{ url_for('signup_page') }}" class="btn btn-secondary">Sign Up</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <section class="featured-services">
+        <h2>Featured Services</h2>
+        <div class="ads-grid" id="homeAds">
+            <p>Loading services...</p>
+        </div>
+    </section>
+
+    {% if not session.get('user_id') %}
+        <section class="features">
+            <h2>Why Choose Workmitra?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🔧</div>
+                    <h3>Verified Professionals</h3>
+                    <p>Connect with skilled and verified artisans in your area.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3>Ratings & Reviews</h3>
+                    <p>Read genuine reviews from real customers before booking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Easy Booking</h3>
+                    <p>Book services instantly with our simple and fast booking system.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Subscription Plans</h3>
+                    <p>Get recurring maintenance services at discounted rates.</p>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+</div>
+
+<script>
+    // Load homepage ads
+    async function loadHomeAds() {
+        try {
+            const response = await fetch('/api/ads/homepage');
+            const data = await response.json();
+            
+            const container = document.getElementById('homeAds');
+            container.innerHTML = '';
+            
+            if (!data.success || data.ads.length === 0) {
+                container.innerHTML = '<p>No services available yet.</p>';
+                return;
+            }
+            
+            data.ads.forEach(ad => {
+                const adCard = document.createElement('div');
+                adCard.className = 'ad-card';
+                
+                let imageHtml = '';
+                if (ad.ad_photo) {
+                    imageHtml = `<div class="ad-image"><img src="/uploads/${ad.ad_photo}" alt="${ad.product_name}"></div>`;
+                } else {
+                    imageHtml = `<div class="ad-image">📷</div>`;
+                }
+                
+                adCard.innerHTML = `
+                    ${imageHtml}
+                    <div class="ad-content">
+                        <h4>${ad.product_name}</h4>
+                        <p>${ad.description}</p>
+                        <div class="ad-price">${ad.product_price || 'Contact for price'}</div>
+                        <span class="ad-skill">${ad.primary_skill}</span>
+                        <p class="ad-shop">By: ${ad.shop_name}</p>
+                    </div>
+                `;
+                
+                container.appendChild(adCard);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
+    loadHomeAds();
+</script>
+{% endblock %}

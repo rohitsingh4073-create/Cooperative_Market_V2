@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Workmitra{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box auth-box-wide">
+        <h1>Join Workmitra</h1>
+        
+        <div class="signup-tabs">
+            <button class="tab-button active" data-tab="customer">Customer</button>
+            <button class="tab-button" data-tab="worker">Worker</button>
+            <button class="tab-button" data-tab="shop">Shop Owner</button>
+        </div>
+        
+        <!-- CUSTOMER SIGNUP -->
+        <form id="customerForm" class="signup-form active" method="POST" action="{{ url_for('signup_page') }}">
+            <input type="hidden" name="user_type" value="customer">
+            
+            <div class="form-group">
+                <label for="customer_name">Full Name</label>
+                <input type="text" id="customer_name" name="full_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="customer_mobile">Mobile Number</label>
+                <input type="text" id="customer_mobile" name="mobile_number" placeholder="10-digit number" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="customer_password">Password</label>
+                <input type="password" id="customer_password" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="customer_email">Email</label>
+                <input type="email" id="customer_email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="customer_address">Address</label>
+                <input type="text" id="customer_address" name="address" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="customer_pincode">Pincode</label>
+                <input type="text" id="customer_pincode" name="pincode" placeholder="6-digit pincode" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Create Customer Account</button>
+            <div class="form-message"></div>
+        </form>
+        
+        <!-- WORKER SIGNUP -->
+        <form id="workerForm" class="signup-form" method="POST" action="{{ url_for('signup_page') }}">
+            <input type="hidden" name="user_type" value="worker">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="worker_name">Full Name</label>
+                    <input type="text" id="worker_name" name="full_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="worker_mobile">Mobile Number</label>
+                    <input type="text" id="worker_mobile" name="mobile_number" placeholder="10-digit number" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="worker_password">Password</label>
+                    <input type="password" id="worker_password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="worker_email">Email</label>
+                    <input type="email" id="worker_email" name="email">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="worker_age">Age</label>
+                    <input type="number" id="worker_age" name="age" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="worker_city">City</label>
+                    <input type="text" id="worker_city" name="city" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="worker_address">Address</label>
+                    <input type="text" id="worker_address" name="current_address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="worker_pincode">Pincode</label>
+                    <input type="text" id="worker_pincode" name="pincode" placeholder="6-digit pincode" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="worker_skill">Primary Skill</label>
+                <select id="worker_skill" name="primary_skill" required>
+                    <option value="">Select a skill</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Painter">Painter</option>
+                    <option value="Cleaner">Cleaner</option>
+                    <option value="Driver">Driver</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="worker_additional_skills">Additional Skills</label>
+                <input type="text" id="worker_additional_skills" name="additional_skills">
+            </div>
+            
+            <div class="form-group">
+                <label for="worker_experience">Years of Experience</label>
+                <input type="number" id="worker_experience" name="years_of_experience" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="worker_description">About You</label>
+                <textarea id="worker_description" name="description" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="worker_hours">Preferred Working Hours</label>
+                <input type="text" id="worker_hours" name="preferred_working_hours" placeholder="e.g., 9 AM - 5 PM">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Create Worker Account</button>
+            <div class="form-message"></div>
+        </form>
+        
+        <!-- SHOP SIGNUP -->
+        <form id="shopForm" class="signup-form" method="POST" action="{{ url_for('signup_page') }}">
+            <input type="hidden" name="user_type" value="shop">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="shop_name">Shop Name</label>
+                    <input type="text" id="shop_name" name="shop_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="shop_mobile">Mobile Number</label>
+                    <input type="text" id="shop_mobile" name="mobile_number" placeholder="10-digit number" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="shop_password">Password</label>
+                    <input type="password" id="shop_password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="shop_email">Email</label>
+                    <input type="email" id="shop_email" name="email">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="shop_skill">Primary Skill</label>
+                <select id="shop_skill" name="primary_skill" required>
+                    <option value="">Select a skill</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Painter">Painter</option>
+                    <option value="Cleaner">Cleaner</option>
+                    <option value="Driver">Driver</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="shop_additional_skills">Additional Skills</label>
+                <input type="text" id="shop_additional_skills" name="additional_skills">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="shop_address">Address</label>
+                    <input type="text" id="shop_address" name="address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="shop_city">City</label>
+                    <input type="text" id="shop_city" name="city" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="shop_pincode">Pincode</label>
+                <input type="text" id="shop_pincode" name="pincode" placeholder="6-digit pincode" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="shop_description">About Your Shop</label>
+                <textarea id="shop_description" name="description" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="shop_worker_list">Worker List (comma separated)</label>
+                <input type="text" id="shop_worker_list" name="worker_list" placeholder="John, Sarah, Mike">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Create Shop Account</button>
+            <div class="form-message"></div>
+        </form>
+        
+        <p class="auth-link">Already have an account? <a href="{{ url_for('login_page') }}">Login here</a></p>
+    </div>
+</div>
+
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.signup-form').forEach(f => f.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.getElementById(this.dataset.tab + 'Form').classList.add('active');
+        });
+    });
+    
+    // Form submissions
+    document.querySelectorAll('.signup-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageEl = this.querySelector('.form-message');
+            
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    messageEl.className = 'form-message error-message';
+                    messageEl.textContent = data.message;
+                }
+            } catch (error) {
+                messageEl.className = 'form-message error-message';
+                messageEl.textContent = 'Error connecting to server';
+            }
+        });
+    });
+</script>
+{% endblock %}

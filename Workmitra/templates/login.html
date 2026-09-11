@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Workmitra{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>Login to Workmitra</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="mobile">Mobile Number</label>
+                <input type="text" id="mobile" name="mobile_number" placeholder="10-digit mobile number" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Your password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+            
+            <div id="loginMessage" class="message"></div>
+        </form>
+        
+        <p class="auth-link">Don't have an account? <a href="{{ url_for('signup_page') }}">Sign up here</a></p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const mobile = document.getElementById('mobile').value;
+        const password = document.getElementById('password').value;
+        const messageEl = document.getElementById('loginMessage');
+        
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mobile_number: mobile,
+                    password: password
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                messageEl.className = 'message error-message';
+                messageEl.textContent = data.message;
+            }
+        } catch (error) {
+            messageEl.className = 'message error-message';
+            messageEl.textContent = 'Error connecting to server';
+        }
+    });
+</script>
+{% endblock %}

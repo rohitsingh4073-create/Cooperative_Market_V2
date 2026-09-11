@@ -1,0 +1,1830 @@
+{% extends "base.html" %}
+
+{% block title %}Shop Dashboard - WorkMitra{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="dashboard-sidebar">
+
+        <div class="dashboard-user">
+
+            <div class="user-avatar">
+                {{ user.shop_name[0]|upper }}
+            </div>
+
+            <div>
+                <strong>{{ user.shop_name }}</strong>
+                <span>Shop</span>
+            </div>
+
+        </div>
+
+        <nav class="dashboard-nav">
+
+            <button
+                class="dashboard-nav-item active"
+                onclick="showShopSection('overview', this)">
+                <span>▦</span>
+                Overview
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('profile', this)">
+                <span>◉</span>
+                Profile
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('team', this)">
+                <span>♙</span>
+                Team
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('bookings', this)">
+                <span>▤</span>
+                Bookings
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('portfolio', this)">
+                <span>▧</span>
+                Portfolio
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('services', this)">
+                <span>◇</span>
+                Products & Services
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('subscriptions', this)">
+                <span>↻</span>
+                Subscriptions
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('availability', this)">
+                <span>◷</span>
+                Availability
+            </button>
+
+            <button
+                class="dashboard-nav-item"
+                onclick="showShopSection('earnings', this)">
+                <span>₹</span>
+                Earnings
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="/logout" class="dashboard-nav-item">
+                <span>↪</span>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="dashboard-main">
+
+        <div id="shop-alert" class="alert hidden"></div>
+
+
+        <!-- =================================================
+             OVERVIEW
+        ================================================== -->
+
+        <section id="shop-overview" class="dashboard-section active">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">SHOP DASHBOARD</p>
+                    <h1>Welcome, {{ user.shop_name }}</h1>
+                    <p>
+                        Manage your shop, team, bookings and services
+                        from one place.
+                    </p>
+                </div>
+
+                <span
+                    id="shop-availability-badge"
+                    class="status-badge">
+                    Checking availability...
+                </span>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span class="stat-label">Total Bookings</span>
+                    <strong id="stat-total-bookings">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Pending</span>
+                    <strong id="stat-pending">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Completed</span>
+                    <strong id="stat-completed">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Team Members</span>
+                    <strong id="stat-team">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Services</span>
+                    <strong id="stat-services">0</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Rating</span>
+                    <strong id="stat-rating">—</strong>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid-2">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+                        <div>
+                            <h3>Shop Information</h3>
+                            <p>Your marketplace profile.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-list">
+
+                        <div>
+                            <span>Shop</span>
+                            <strong>{{ user.shop_name }}</strong>
+                        </div>
+
+                        <div>
+                            <span>Primary Skill</span>
+                            <strong>{{ user.primary_skill }}</strong>
+                        </div>
+
+                        <div>
+                            <span>City</span>
+                            <strong>{{ user.city }}</strong>
+                        </div>
+
+                        <div>
+                            <span>Phone</span>
+                            <strong>{{ user.mobile_number }}</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+                        <div>
+                            <h3>Quick Actions</h3>
+                            <p>Common shop operations.</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="openShopSection('bookings')">
+                            View Bookings
+                        </button>
+
+                        <button
+                            class="btn btn-secondary"
+                            onclick="openShopSection('services')">
+                            Add Service
+                        </button>
+
+                        <button
+                            class="btn btn-secondary"
+                            onclick="openShopSection('portfolio')">
+                            Add Portfolio Photo
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PROFILE
+        ================================================== -->
+
+        <section id="shop-profile" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">PROFILE</p>
+                    <h2>Shop Profile</h2>
+                    <p>Information customers see about your shop.</p>
+                </div>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="profile-large">
+
+                    <div class="user-avatar large">
+                        {{ user.shop_name[0]|upper }}
+                    </div>
+
+                    <div>
+                        <h2>{{ user.shop_name }}</h2>
+                        <p>{{ user.primary_skill }}</p>
+                    </div>
+
+                </div>
+
+                <div class="info-grid">
+
+                    <div class="info-field">
+                        <span>Shop Name</span>
+                        <strong>{{ user.shop_name }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>Mobile</span>
+                        <strong>{{ user.mobile_number }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>Email</span>
+                        <strong>{{ user.email or "Not provided" }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>Primary Skill</span>
+                        <strong>{{ user.primary_skill }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>Additional Skills</span>
+                        <strong>{{ user.additional_skills or "None" }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>City</span>
+                        <strong>{{ user.city }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>Pincode</span>
+                        <strong>{{ user.pincode }}</strong>
+                    </div>
+
+                    <div class="info-field">
+                        <span>Address</span>
+                        <strong>{{ user.current_address }}</strong>
+                    </div>
+
+                </div>
+
+                <div class="description-box">
+
+                    <span>Description</span>
+
+                    <p>
+                        {{ user.description or
+                        "No shop description has been added yet." }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TEAM
+        ================================================== -->
+
+        <section id="shop-team" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">TEAM</p>
+                    <h2>Shop Team</h2>
+                    <p>
+                        Manage the workers associated with your shop.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h3>Workers</h3>
+                        <p>
+                            Add worker names separated by commas.
+                        </p>
+                    </div>
+
+                </div>
+
+                <form id="team-form">
+
+                    <div class="form-group">
+
+                        <label for="team-workers">
+                            Worker List
+                        </label>
+
+                        <textarea
+                            id="team-workers"
+                            rows="5"
+                            placeholder="Rahul, Amit, Suresh"></textarea>
+
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">
+                        Save Team
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div id="team-list" class="cards-grid"></div>
+
+        </section>
+
+
+        <!-- =================================================
+             BOOKINGS
+        ================================================== -->
+
+        <section id="shop-bookings" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">BOOKINGS</p>
+                    <h2>Customer Bookings</h2>
+                    <p>
+                        Accept, reject and complete service requests.
+                    </p>
+                </div>
+
+            </div>
+
+            <div id="shop-bookings-list" class="dashboard-list">
+
+                <div class="empty-state">
+                    Loading bookings...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PORTFOLIO
+        ================================================== -->
+
+        <section id="shop-portfolio" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">PORTFOLIO</p>
+                    <h2>Shop Portfolio</h2>
+                    <p>
+                        Show customers examples of your work.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <form id="portfolio-form">
+
+                    <div class="form-group">
+
+                        <label for="portfolio-photo">
+                            Upload Work Photo
+                        </label>
+
+                        <input
+                            type="file"
+                            id="portfolio-photo"
+                            name="portfolio_photo"
+                            accept="image/png,image/jpeg,image/jpg,image/gif"
+                            required>
+
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Upload Photo
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div
+                id="shop-portfolio-grid"
+                class="photo-grid">
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PRODUCTS / SERVICES
+        ================================================== -->
+
+        <section id="shop-services" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">MARKETPLACE</p>
+                    <h2>Products & Services</h2>
+                    <p>
+                        Add services or products customers can discover.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <form id="product-form">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="product-name">
+                                Name
+                            </label>
+
+                            <input
+                                id="product-name"
+                                type="text"
+                                placeholder="AC Repair"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="product-price">
+                                Price
+                            </label>
+
+                            <input
+                                id="product-price"
+                                type="text"
+                                placeholder="₹499">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="product-description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="product-description"
+                            rows="4"
+                            placeholder="Describe the service or product..."
+                            required></textarea>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="product-photo">
+                            Photo
+                        </label>
+
+                        <input
+                            type="file"
+                            id="product-photo"
+                            accept="image/png,image/jpeg,image/jpg,image/gif">
+
+                    </div>
+
+
+                    <button class="btn btn-primary">
+                        Add to Marketplace
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div
+                id="shop-products-grid"
+                class="cards-grid">
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SUBSCRIPTIONS
+        ================================================== -->
+
+        <section id="shop-subscriptions" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">MAINTENANCE</p>
+                    <h2>Subscriptions</h2>
+                    <p>
+                        View maintenance customers associated with the shop.
+                    </p>
+                </div>
+
+            </div>
+
+            <div
+                id="shop-subscriptions-list"
+                class="dashboard-list">
+                Loading...
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             AVAILABILITY
+        ================================================== -->
+
+        <section id="shop-availability" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">AVAILABILITY</p>
+                    <h2>Shop Availability</h2>
+                    <p>
+                        Control whether customers can request your services.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="dashboard-card availability-card">
+
+                <div>
+
+                    <h3 id="availability-title">
+                        Checking...
+                    </h3>
+
+                    <p id="availability-description">
+                        Loading shop availability.
+                    </p>
+
+                </div>
+
+                <label class="toggle">
+
+                    <input
+                        type="checkbox"
+                        id="availability-toggle">
+
+                    <span class="toggle-slider"></span>
+
+                </label>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             EARNINGS
+        ================================================== -->
+
+        <section id="shop-earnings" class="dashboard-section">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <p class="eyebrow">EARNINGS</p>
+                    <h2>Shop Earnings</h2>
+                    <p>
+                        Track completed jobs.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Completed Jobs
+                    </span>
+
+                    <strong id="earnings-jobs">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <span class="stat-label">
+                        Earnings
+                    </span>
+
+                    <strong id="earnings-value">
+                        ₹0
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <p>
+                    Payment calculation is not implemented in the current
+                    backend, so earnings currently remain ₹0.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const SHOP_ID = "{{ user.worker_id }}";
+const API_URL = window.location.origin;
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+function showShopSection(section, button) {
+
+    document
+        .querySelectorAll(".dashboard-section")
+        .forEach(sectionElement => {
+            sectionElement.classList.remove("active");
+        });
+
+    document
+        .querySelectorAll(".dashboard-nav-item")
+        .forEach(navButton => {
+            navButton.classList.remove("active");
+        });
+
+    const target = document.getElementById(
+        "shop-" + section
+    );
+
+    if (target) {
+        target.classList.add("active");
+    }
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    if (section === "overview") {
+        loadShopStats();
+    }
+
+    if (section === "team") {
+        loadShopTeam();
+    }
+
+    if (section === "bookings") {
+        loadShopBookings();
+    }
+
+    if (section === "portfolio") {
+        loadShopPortfolio();
+    }
+
+    if (section === "services") {
+        loadShopProducts();
+    }
+
+    if (section === "subscriptions") {
+        loadShopSubscriptions();
+    }
+
+    if (section === "availability") {
+        loadAvailability();
+    }
+
+    if (section === "earnings") {
+        loadEarnings();
+    }
+}
+
+
+function openShopSection(section) {
+
+    const buttons = document.querySelectorAll(
+        ".dashboard-nav-item"
+    );
+
+    buttons.forEach(button => {
+
+        const text = button.textContent
+            .trim()
+            .toLowerCase();
+
+        if (text.includes(section.toLowerCase())) {
+            showShopSection(section, button);
+        }
+
+    });
+
+}
+
+
+/* ============================================================
+   ALERT
+============================================================ */
+
+function shopAlert(message, type = "success") {
+
+    const alert = document.getElementById("shop-alert");
+
+    alert.textContent = message;
+
+    alert.className =
+        "alert " + type;
+
+    setTimeout(() => {
+        alert.classList.add("hidden");
+    }, 3500);
+}
+
+
+/* ============================================================
+   STATS
+============================================================ */
+
+async function loadShopStats() {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/shop/${SHOP_ID}/stats`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        const stats = data.stats;
+
+        document.getElementById(
+            "stat-total-bookings"
+        ).textContent = stats.total_bookings;
+
+        document.getElementById(
+            "stat-pending"
+        ).textContent = stats.pending_bookings;
+
+        document.getElementById(
+            "stat-completed"
+        ).textContent = stats.completed_bookings;
+
+        document.getElementById(
+            "stat-team"
+        ).textContent = stats.team_members;
+
+        document.getElementById(
+            "stat-services"
+        ).textContent = stats.products_services;
+
+        document.getElementById(
+            "stat-rating"
+        ).textContent =
+            stats.average_rating !== null
+                ? `★ ${stats.average_rating}`
+                : "—";
+
+    } catch (error) {
+
+        console.error(
+            "Could not load shop stats:",
+            error
+        );
+
+    }
+}
+
+
+/* ============================================================
+   TEAM
+============================================================ */
+
+async function loadShopTeam() {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/shop/${SHOP_ID}/team`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        const textarea =
+            document.getElementById("team-workers");
+
+        textarea.value = data.team
+            .map(worker => worker.name)
+            .join(", ");
+
+        const container =
+            document.getElementById("team-list");
+
+        if (data.team.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    No team members added yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML =
+            data.team.map(worker => `
+                <div class="provider-card">
+
+                    <div class="provider-avatar">
+                        ${escapeHTML(worker.name.charAt(0).toUpperCase())}
+                    </div>
+
+                    <div>
+                        <h3>${escapeHTML(worker.name)}</h3>
+                        <p>Shop team member</p>
+                    </div>
+
+                </div>
+            `).join("");
+
+    } catch (error) {
+
+        console.error(
+            "Could not load team:",
+            error
+        );
+
+    }
+}
+
+
+document
+    .getElementById("team-form")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const names =
+            document
+                .getElementById("team-workers")
+                .value
+                .split(",")
+                .map(name => name.trim())
+                .filter(Boolean);
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/api/shop/${SHOP_ID}/team`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        worker_list: names
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.success) {
+                shopAlert(
+                    data.message || "Could not update team.",
+                    "error"
+                );
+                return;
+            }
+
+            shopAlert("Team updated successfully.");
+
+            loadShopTeam();
+            loadShopStats();
+
+        } catch (error) {
+
+            shopAlert(
+                "Could not connect to the server.",
+                "error"
+            );
+
+        }
+
+    });
+
+
+/* ============================================================
+   BOOKINGS
+============================================================ */
+
+async function loadShopBookings() {
+
+    const container =
+        document.getElementById(
+            "shop-bookings-list"
+        );
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/bookings/worker/${SHOP_ID}`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    Could not load bookings.
+                </div>
+            `;
+
+            return;
+        }
+
+        if (data.bookings.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>No bookings yet</h3>
+                    <p>
+                        Customer booking requests will appear here.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML =
+            data.bookings.map(booking => {
+
+                let actions = "";
+
+                if (booking.status === "PENDING") {
+
+                    actions = `
+                        <button
+                            class="btn btn-primary btn-small"
+                            onclick="updateShopBooking(
+                                '${booking.booking_id}',
+                                'accept'
+                            )">
+                            Accept
+                        </button>
+
+                        <button
+                            class="btn btn-danger btn-small"
+                            onclick="updateShopBooking(
+                                '${booking.booking_id}',
+                                'reject'
+                            )">
+                            Reject
+                        </button>
+                    `;
+
+                }
+
+                if (booking.status === "ACCEPTED") {
+
+                    actions = `
+                        <button
+                            class="btn btn-primary btn-small"
+                            onclick="updateShopBooking(
+                                '${booking.booking_id}',
+                                'complete'
+                            )">
+                            Mark Complete
+                        </button>
+                    `;
+
+                }
+
+                const photo =
+                    booking.problem_photo
+                        ? `
+                            <a
+                                href="/uploads/${encodeURIComponent(
+                                    booking.problem_photo
+                                )}"
+                                target="_blank">
+                                View Problem Photo
+                            </a>
+                          `
+                        : "";
+
+                return `
+                    <div class="booking-card">
+
+                        <div class="booking-main">
+
+                            <div>
+
+                                <span class="booking-id">
+                                    ${escapeHTML(
+                                        booking.booking_id
+                                    )}
+                                </span>
+
+                                <h3>
+                                    ${escapeHTML(
+                                        booking.service
+                                    )}
+                                </h3>
+
+                                <p>
+                                    Customer:
+                                    <strong>
+                                        ${escapeHTML(
+                                            booking.customer_name ||
+                                            "Customer"
+                                        )}
+                                    </strong>
+                                </p>
+
+                                <p>
+                                    Date:
+                                    ${escapeHTML(
+                                        booking.date
+                                    )}
+                                </p>
+
+                                ${photo}
+
+                            </div>
+
+                            <div class="booking-actions">
+
+                                <span class="status-badge">
+                                    ${escapeHTML(
+                                        booking.status
+                                    )}
+                                </span>
+
+                                ${actions}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("");
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="empty-state">
+                Could not connect to the server.
+            </div>
+        `;
+
+    }
+}
+
+
+async function updateShopBooking(
+    bookingId,
+    action
+) {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/booking/${bookingId}/${action}`,
+            {
+                method: "POST"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+
+            shopAlert(
+                data.message || "Action failed.",
+                "error"
+            );
+
+            return;
+        }
+
+        shopAlert(data.message);
+
+        loadShopBookings();
+        loadShopStats();
+
+    } catch (error) {
+
+        shopAlert(
+            "Could not connect to the server.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   PORTFOLIO
+============================================================ */
+
+async function loadShopPortfolio() {
+
+    const container =
+        document.getElementById(
+            "shop-portfolio-grid"
+        );
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/portfolio/${SHOP_ID}`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        if (data.photos.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    No portfolio photos uploaded yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML =
+            data.photos.map(photo => `
+                <div class="photo-card">
+
+                    <img
+                        src="/uploads/${encodeURIComponent(photo)}"
+                        alt="Shop portfolio">
+
+                </div>
+            `).join("");
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+document
+    .getElementById("portfolio-form")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const file =
+            document.getElementById(
+                "portfolio-photo"
+            ).files[0];
+
+        if (!file) {
+            shopAlert(
+                "Please select a photo.",
+                "error"
+            );
+            return;
+        }
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "worker_id",
+            SHOP_ID
+        );
+
+        formData.append(
+            "portfolio_photo",
+            file
+        );
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/api/upload/portfolio`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.success) {
+
+                shopAlert(
+                    data.message,
+                    "error"
+                );
+
+                return;
+            }
+
+            shopAlert(
+                "Portfolio photo uploaded."
+            );
+
+            this.reset();
+
+            loadShopPortfolio();
+            loadShopStats();
+
+        } catch (error) {
+
+            shopAlert(
+                "Upload failed.",
+                "error"
+            );
+
+        }
+
+    });
+
+
+/* ============================================================
+   PRODUCTS / SERVICES
+============================================================ */
+
+async function loadShopProducts() {
+
+    const container =
+        document.getElementById(
+            "shop-products-grid"
+        );
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/products/${SHOP_ID}`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        if (data.products.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    No products or services listed yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML =
+            data.products.map(product => `
+
+                <div class="product-card">
+
+                    ${
+                        product.product_photo
+                        ? `
+                            <img
+                                src="/uploads/${encodeURIComponent(
+                                    product.product_photo
+                                )}"
+                                alt="${escapeHTML(
+                                    product.product_name
+                                )}">
+                          `
+                        : ""
+                    }
+
+                    <div class="product-content">
+
+                        <h3>
+                            ${escapeHTML(
+                                product.product_name
+                            )}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                product.product_description || ""
+                            )}
+                        </p>
+
+                        ${
+                            product.product_price
+                            ? `
+                                <strong>
+                                    ${escapeHTML(
+                                        product.product_price
+                                    )}
+                                </strong>
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+
+            `).join("");
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+document
+    .getElementById("product-form")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "worker_id",
+            SHOP_ID
+        );
+
+        formData.append(
+            "product_name",
+            document.getElementById(
+                "product-name"
+            ).value
+        );
+
+        formData.append(
+            "product_description",
+            document.getElementById(
+                "product-description"
+            ).value
+        );
+
+        formData.append(
+            "product_price",
+            document.getElementById(
+                "product-price"
+            ).value
+        );
+
+        const photo =
+            document.getElementById(
+                "product-photo"
+            ).files[0];
+
+        if (photo) {
+
+            formData.append(
+                "product_photo",
+                photo
+            );
+
+        }
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/api/product/add`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.success) {
+
+                shopAlert(
+                    data.message,
+                    "error"
+                );
+
+                return;
+            }
+
+            shopAlert(
+                "Product/service added."
+            );
+
+            this.reset();
+
+            loadShopProducts();
+            loadShopStats();
+
+        } catch (error) {
+
+            shopAlert(
+                "Could not connect to the server.",
+                "error"
+            );
+
+        }
+
+    });
+
+
+/* ============================================================
+   SUBSCRIPTIONS
+============================================================ */
+
+async function loadShopSubscriptions() {
+
+    const container =
+        document.getElementById(
+            "shop-subscriptions-list"
+        );
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/subscriptions/worker/${SHOP_ID}`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        if (data.subscriptions.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+                    No subscriptions yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        container.innerHTML =
+            data.subscriptions.map(subscription => `
+
+                <div class="subscription-card">
+
+                    <div>
+
+                        <span class="booking-id">
+                            ${escapeHTML(
+                                subscription.subscription_id
+                            )}
+                        </span>
+
+                        <h3>
+                            ${escapeHTML(
+                                subscription.plan_name
+                            )}
+                        </h3>
+
+                        <p>
+                            Customer:
+                            <strong>
+                                ${escapeHTML(
+                                    subscription.customer_name ||
+                                    "Customer"
+                                )}
+                            </strong>
+                        </p>
+
+                        <p>
+                            ${escapeHTML(
+                                subscription.plan_description
+                            )}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            ${escapeHTML(
+                                subscription.plan_price
+                            )}
+                        </strong>
+
+                        <span class="status-badge">
+                            ${escapeHTML(
+                                subscription.status
+                            )}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `).join("");
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* ============================================================
+   AVAILABILITY
+============================================================ */
+
+async function loadAvailability() {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/shop/${SHOP_ID}`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        const available =
+            data.shop.available;
+
+        const toggle =
+            document.getElementById(
+                "availability-toggle"
+            );
+
+        toggle.checked = available;
+
+        updateAvailabilityUI(available);
+
+        document.getElementById(
+            "shop-availability-badge"
+        ).textContent =
+            available
+                ? "Available"
+                : "Unavailable";
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+function updateAvailabilityUI(available) {
+
+    document.getElementById(
+        "availability-title"
+    ).textContent =
+        available
+            ? "Shop is available"
+            : "Shop is unavailable";
+
+    document.getElementById(
+        "availability-description"
+    ).textContent =
+        available
+            ? "Customers can request your services."
+            : "Customers cannot currently request your services.";
+
+}
+
+
+document
+    .getElementById("availability-toggle")
+    .addEventListener("change", async function() {
+
+        const available = this.checked;
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/api/worker/${SHOP_ID}/availability`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        available: available
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.success) {
+
+                this.checked = !available;
+
+                shopAlert(
+                    data.message,
+                    "error"
+                );
+
+                return;
+            }
+
+            updateAvailabilityUI(
+                data.available
+            );
+
+            document.getElementById(
+                "shop-availability-badge"
+            ).textContent =
+                data.available
+                    ? "Available"
+                    : "Unavailable";
+
+            shopAlert(
+                data.available
+                    ? "Shop is now available."
+                    : "Shop is now unavailable."
+            );
+
+        } catch (error) {
+
+            this.checked = !available;
+
+            shopAlert(
+                "Could not update availability.",
+                "error"
+            );
+
+        }
+
+    });
+
+
+/* ============================================================
+   EARNINGS
+============================================================ */
+
+async function loadEarnings() {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/api/worker/${SHOP_ID}/earnings`
+        );
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        document.getElementById(
+            "earnings-jobs"
+        ).textContent =
+            data.completed_jobs;
+
+        document.getElementById(
+            "earnings-value"
+        ).textContent =
+            "₹" + data.earnings;
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* ============================================================
+   INITIAL LOAD
+============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadShopStats();
+        loadAvailability();
+
+    }
+);
+
+</script>
+
+{% endblock %}
